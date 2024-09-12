@@ -1,4 +1,5 @@
 """The main class of WAF-A-MoLE"""
+
 import signal
 
 from multiprocessing import Pool
@@ -12,8 +13,7 @@ map = Pool().map
 
 
 class EvasionEngine(CoreEngine):
-    """Evasion engine object.
-    """
+    """Evasion engine object."""
 
     def __init__(self, model: Model):
         """Initialize an evasion object.
@@ -78,7 +78,7 @@ class EvasionEngine(CoreEngine):
         evaluation_results = []
         min_confidence, min_payload = self._mutation_round(payload, round_size)
         evaluation_results.append((min_confidence, min_payload))
-
+        
         try:
             while max_rounds > 0 and min_confidence > threshold:
                 for candidate_confidence, candidate_payload in sorted(
@@ -101,6 +101,7 @@ class EvasionEngine(CoreEngine):
 
         except TimeoutError:
             print("[!] Execution timed out")
+            max_rounds = 0
 
         print(
             "Reached confidence {}\nwith payload\n{}".format(
@@ -108,4 +109,4 @@ class EvasionEngine(CoreEngine):
             )
         )
 
-        return min_confidence, min_payload
+        return min_confidence, min_payload, max_rounds
