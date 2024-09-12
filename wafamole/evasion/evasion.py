@@ -76,10 +76,11 @@ class EvasionEngine(CoreEngine):
         signal.alarm(timeout)
 
         evaluation_results = []
-        min_confidence, min_payload = self._mutation_round(payload, round_size)
-        evaluation_results.append((min_confidence, min_payload))
         
         try:
+            min_confidence, min_payload = self._mutation_round(payload, round_size)
+            evaluation_results.append((min_confidence, min_payload))
+            
             while max_rounds > 0 and min_confidence > threshold:
                 for candidate_confidence, candidate_payload in sorted(
                     evaluation_results
