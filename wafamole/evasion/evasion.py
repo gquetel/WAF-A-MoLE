@@ -76,16 +76,17 @@ class EvasionEngine(CoreEngine):
         signal.alarm(timeout)
 
         evaluation_results = []
-        
+        min_confidence, min_payload = 1, payload
         try:
+            remaining_rounds = max_rounds
             min_confidence, min_payload = self._mutation_round(payload, round_size)
             evaluation_results.append((min_confidence, min_payload))
             
-            while max_rounds > 0 and min_confidence > threshold:
+            while remaining_rounds > 0 and min_confidence > threshold:
                 for candidate_confidence, candidate_payload in sorted(
                     evaluation_results
                 ):
-                    max_rounds -= 1
+                    remaining_rounds -= 1
 
                     confidence, payload = self._mutation_round(
                         candidate_payload, round_size
@@ -94,20 +95,27 @@ class EvasionEngine(CoreEngine):
                         evaluation_results.append((confidence, payload))
                         min_confidence, min_payload = min(evaluation_results)
                         break
-
-            if min_confidence < threshold:
-                print("[+] Threshold reached")
-            elif max_rounds <= 0:
-                print("[!] Max number of iterations reached")
+                    
+            # Is polluting output
+            # if min_confidence < threshold:
+            #     print("[+] Threshold reached")
+            # elif remaining_rounds <= 0:
+            #     print("[!] Max number of iterations reached")
 
         except TimeoutError:
-            print("[!] Execution timed out")
-            max_rounds = 0
+            # print("[!] Execution timed out")
 
-        print(
-            "Reached confidence {}\nwith payload\n{}".format(
-                min_confidence, repr(min_payload)
-            )
-        )
+            if len(evaluation_results) == 0:
+                return min_confidence, payload, remaining_rounds
 
-        return min_confidence, min_payload, max_rounds
+        # print(
+        #     "Reached confidence {}\nwith payload\n{}".format(
+        #         min_confidence, repr(min_payload)
+        #     )
+        # )
+        
+        # 3 reasons to stop the loop:
+        # 1. The confidence is below the threshold (min_confidence < threshold)
+        # 2. The max number of iterations is reached (remaining_rounds <= 0)
+        # 3. The timeout is reached (min_confidence > threshold && remaining_rounds > 0)
+        return min_confidence, min_payload, remaining_rounds
