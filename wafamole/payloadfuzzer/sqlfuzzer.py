@@ -218,10 +218,9 @@ def random_case(payload: str):
 
     return "".join(new_payload)
 
-
 def comment_rewriting(payload: str):
     """
-    Changes the content of a randomly chosen in-line or multi-line comment.
+    Changes the content of a randomly chosen multi-line comment.
     
     Arguments:
         payload: query payload (string)
@@ -231,9 +230,11 @@ def comment_rewriting(payload: str):
     """
     p = random.random()
 
-    if p < 0.5 and ("#" in payload or "-- " in payload):
-        return payload + random_string(2)
-    elif p >= 0.5 and re.search(r"/\*[^(/\*|\*/)]*\*/", payload):
+    # '#' and '-- ' can be within a string.
+    # if p < 0.5 and ("#" in payload or "-- " in payload):
+    #     return payload + random_string(2)
+    # elif p >= 0.5 and 
+    if re.search(r"/\*[^(/\*|\*/)]*\*/", payload):
         return replace_random(payload, r"/\*[^(/\*|\*/)]*\*/", "/*" + random_string() + "*/")
     else:
         return payload
