@@ -6,6 +6,7 @@ dist/
 wafamole/__pycache__/
 
 wafamole.egg-info/
-
+result
+result
 build/
 *.pyc
