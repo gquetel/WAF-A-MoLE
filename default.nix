@@ -1,10 +1,23 @@
 {
   lib,
-  python311,
   fetchFromGitHub,
+  buildPythonPackage,
+  # Build system dependencies
+  setuptools,
+  wheel,
+
+  # Runtime dependencies
+  click,
+  joblib,
+  keras,
+  networkx,
+  numpy,
+  scikit-learn,
+  sqlparse,
+  tensorflow
 }:
 
-python311.pkgs.buildPythonApplication rec {
+buildPythonPackage rec {
   pname = "wafamole";
   version = "unstable-2024-10-11";
   pyproject = true;
@@ -17,11 +30,11 @@ python311.pkgs.buildPythonApplication rec {
   };
 
   build-system = [
-    python311.pkgs.setuptools
-    python311.pkgs.wheel
+    setuptools
+    wheel
   ];
 
-  dependencies = with python311.pkgs; [
+  dependencies =  [
     click
     joblib
     keras
@@ -39,7 +52,7 @@ python311.pkgs.buildPythonApplication rec {
   meta = {
     description = "A guided mutation-based fuzzer for ML-based Web Application Firewalls";
     homepage = "https://github.com/gquetel/WAF-A-MoLE";
-    license = lib.licenses.mit;
+    license = with lib.licenses ;  [mit];
     maintainers = with lib.maintainers; [ ];
     mainProgram = "wafamole";
   };
