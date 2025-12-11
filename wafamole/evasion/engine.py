@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from wafamole.payloadfuzzer.sqlfuzzer import SqlFuzzer
+from wafamole.payloadfuzzer.sqlfuzzer import SqlFuzzer, SyntPreservingSqlFuzzer
 from wafamole.models import Model
 
 
@@ -9,8 +9,9 @@ class CoreEngine(object, metaclass=ABCMeta):
 		self._model = model
 
 	def _mutation_round(self, payload, round_size):
-		fuzzer = SqlFuzzer(payload)
-
+		# fuzzer = SqlFuzzer(payload)
+		fuzzer = SyntPreservingSqlFuzzer(payload)
+		
 		# Some mutations do not apply to some payloads
 		# This removes duplicate payloads
 		payloads = {fuzzer.fuzz() for _ in range(round_size)}

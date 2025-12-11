@@ -78,7 +78,7 @@ class EvasionEngine(CoreEngine):
         evaluation_results = []
         min_confidence, min_payload = self._mutation_round(payload, round_size)
         evaluation_results.append((min_confidence, min_payload))
-
+        _total_round = max_rounds
         try:
             while max_rounds > 0 and min_confidence > threshold:
                 for candidate_confidence, candidate_payload in sorted(
@@ -102,10 +102,11 @@ class EvasionEngine(CoreEngine):
         except TimeoutError:
             print("[!] Execution timed out")
 
+        _total_round = _total_round - max_rounds
         print(
             "Reached confidence {}\nwith payload\n{}".format(
                 min_confidence, repr(min_payload)
             )
         )
 
-        return min_confidence, min_payload
+        return min_confidence, min_payload, _total_round

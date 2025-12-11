@@ -357,3 +357,37 @@ class SqlFuzzer(object):
     def reset(self):
         self.payload = self.initial_payload
         return self.payload
+
+class SyntPreservingSqlFuzzer(object):
+    """SqlFuzzer class"""
+
+    strategies = [
+        spaces_to_comments,
+        random_case,
+        # swap_keywords,
+        # swap_int_repr,
+        spaces_to_whitespaces_alternatives,
+        comment_rewriting,
+        # change_tautologies,
+        # logical_invariant,
+        reset_inline_comments
+    ]
+
+    def __init__(self, payload):
+        self.initial_payload = payload
+        self.payload = payload
+
+    def fuzz(self):
+        strategy = random.choice(self.strategies)
+
+        self.payload = strategy(self.payload)
+        # print(self.payload)
+
+        return self.payload
+
+    def current(self):
+        return self.payload
+
+    def reset(self):
+        self.payload = self.initial_payload
+        return self.payload
