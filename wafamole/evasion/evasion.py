@@ -1,30 +1,32 @@
 """The main class of WAF-A-MoLE"""
+
 import signal
 
 from multiprocessing import Pool
 
 from wafamole.evasion.engine import CoreEngine
 from wafamole.models import Model
-from wafamole.payloadfuzzer.sqlfuzzer import SqlFuzzer
+from wafamole.payloadfuzzer.sqlfuzzer import SqlFuzzer, SyntPreservingSqlFuzzer
 from wafamole.utils.check import type_check
 
 map = Pool().map
 
-
 class EvasionEngine(CoreEngine):
-    """Evasion engine object.
-    """
+    """Evasion engine object."""
 
-    def __init__(self, model: Model):
+    def __init__(
+        self, model: Model, fuzzer: SqlFuzzer | SyntPreservingSqlFuzzer = SqlFuzzer
+    ):
         """Initialize an evasion object.
         Arguments:
             model: the input model to evaluate
+            fuzzer: the fuzzer strategy to use
 
         Raises:
             TypeError: model is not Model
         """
         type_check(model, Model, "model")
-        super(EvasionEngine, self).__init__(model)
+        super(EvasionEngine, self).__init__(model, fuzzer)
 
     # def _mutation_round(self, payload, round_size):
     #

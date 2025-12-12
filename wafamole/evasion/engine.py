@@ -5,12 +5,12 @@ from wafamole.models import Model
 
 class CoreEngine(object, metaclass=ABCMeta):
 
-	def __init__(self, model: Model):
+	def __init__(self, model: Model, fuzzer : SqlFuzzer | SyntPreservingSqlFuzzer = SqlFuzzer):
 		self._model = model
+		self._fuzzer = fuzzer
 
 	def _mutation_round(self, payload, round_size):
-		# fuzzer = SqlFuzzer(payload)
-		fuzzer = SyntPreservingSqlFuzzer(payload)
+		fuzzer =self._fuzzer(payload)
 		
 		# Some mutations do not apply to some payloads
 		# This removes duplicate payloads
